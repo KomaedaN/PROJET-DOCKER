@@ -1,13 +1,16 @@
 services:
-  php:
-    build: .
-    container_name: php
+  php1:
+    build:
+      context: .
+      dockerfile: docker/php1/dockerfile
+    container_name: php1
     volumes:
       - .:/var/www/html
-      - /var/www/html/vendor
-      - /var/www/html/storage
+      - vendor_data:/var/www/html/vendor
+      - storage_data:/var/www/html/storage
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   nginx1:
     image: nginx:latest
@@ -15,10 +18,23 @@ services:
     ports:
       - 8080:80
     depends_on:
-      - php
+      - php1
     volumes:
       - ./:/var/www/html
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
+
+  php2:
+    build:
+      context: .
+      dockerfile: docker/php2/dockerfile
+    container_name: php2
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+      - /var/www/html/storage
+    depends_on:
+      db:
+        condition: service_healthy
 
   nginx2:
     image: nginx:latest
@@ -26,10 +42,10 @@ services:
     ports:
       - 8081:80
     depends_on:
-      - php
+      - php2
     volumes:
       - ./:/var/www/html
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx2.conf:/etc/nginx/conf.d/default.conf
 
   vite:
     image: node:20
@@ -41,7 +57,7 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - php
+      - php1
 
   db:
     image: mysql:latest
@@ -53,6 +69,13 @@ services:
       - 3306:3306
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-prootpassword"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
 
 volumes:
   db_data:
+  vendor_data:
+  storage_data:

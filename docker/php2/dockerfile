@@ -1,0 +1,33 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    TZ=Europe/Paris \
+    COMPOSER_ALLOW_SUPERUSER=1
+
+RUN apt-get update && apt-get install -y tzdata && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
+    dpkg-reconfigure -f noninteractive tzdata
+
+
+
+RUN apt-get update && apt-get install -y \
+    php8.1-fpm php8.1-cli php8.1-mysql php8.1-zip php8.1-curl php8.1-xml unzip git \
+    curl unzip git ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+WORKDIR /var/www/html
+COPY composer.json composer.lock ./
+
+RUN composer install --no-interaction --no-scripts --prefer-dist
+
+
+COPY . /var/www/html
+
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
+RUN sed -ri 's|listen =.*|listen = 0.0.0.0:9000|' /etc/php/8.1/fpm/pool.d/www.conf
+
+CMD ["php-fpm8.1", "-F"]
+
