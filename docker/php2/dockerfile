@@ -29,5 +29,7 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 
 RUN sed -ri 's|listen =.*|listen = 0.0.0.0:9000|' /etc/php/8.1/fpm/pool.d/www.conf
 
+
+
 CMD ["php-fpm8.1", "-F"]
 
