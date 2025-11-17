@@ -8,8 +8,6 @@ RUN apt-get update && apt-get install -y tzdata && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
     dpkg-reconfigure -f noninteractive tzdata
 
-
-
 RUN apt-get update && apt-get install -y \
     php8.1-fpm php8.1-cli php8.1-mysql php8.1-zip php8.1-curl php8.1-xml unzip git \
     curl unzip git ca-certificates \
@@ -21,7 +19,6 @@ COPY composer.json composer.lock ./
 
 RUN composer install --no-interaction --no-scripts --prefer-dist
 
-
 COPY . /var/www/html
 
 RUN chown -R www-data:www-data storage bootstrap/cache \
@@ -30,7 +27,8 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 RUN sed -ri 's|listen =.*|listen = 0.0.0.0:9000|' /etc/php/8.1/fpm/pool.d/www.conf
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh && \
+    sed -i 's/\r$//' /usr/local/bin/entrypoint.sh
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["php-fpm8.1", "-F"]
-
