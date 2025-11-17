@@ -4,8 +4,6 @@ services:
       context: .
       dockerfile: docker/php1/dockerfile
     container_name: php1
-    environment:
-      server: Serveur1
     volumes:
       - .:/var/www/html
       - vendor_data:/var/www/html/vendor
@@ -30,8 +28,6 @@ services:
       context: .
       dockerfile: docker/php2/dockerfile
     container_name: php2
-    environment:
-      server: Serveur2
     volumes:
       - .:/var/www/html
       - /var/www/html/vendor
