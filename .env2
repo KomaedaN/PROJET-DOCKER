@@ -3,7 +3,7 @@ APP_ENV=local
 APP_KEY=base64:UFhxOnoZIynepJmF1O/fd36FHKJGEA0Bj0G1FDzgnHs=
 APP_DEBUG=true
 APP_URL=http://localhost
-APP_SERVER_NAME="serveur 1"
+APP_SERVER_NAME="serveur 2"
 
 LOG_CHANNEL=stack
 LOG_DEPRECATIONS_CHANNEL=null

@@ -4,13 +4,11 @@ services:
       context: .
       dockerfile: docker/php1/dockerfile
     container_name: php1
+    environment:
+      APP_SERVER_NAME: ${APP_SERVER_NAME}
     volumes:
-      - .:/var/www/html
       - vendor_data:/var/www/html/vendor
       - storage_data:/var/www/html/storage
-    depends_on:
-      db:
-        condition: service_healthy
 
   nginx1:
     image: nginx:latest
@@ -29,12 +27,8 @@ services:
       dockerfile: docker/php2/dockerfile
     container_name: php2
     volumes:
-      - .:/var/www/html
       - /var/www/html/vendor
       - /var/www/html/storage
-    depends_on:
-      db:
-        condition: service_healthy
 
   nginx2:
     image: nginx:latest
@@ -69,11 +63,6 @@ services:
       - 3306:3306
     volumes:
       - db_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-prootpassword"]
-      interval: 5s
-      timeout: 3s
-      retries: 30
 
 volumes:
   db_data:

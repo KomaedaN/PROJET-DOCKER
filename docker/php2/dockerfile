@@ -23,6 +23,10 @@ RUN composer install --no-interaction --no-scripts --prefer-dist
 
 
 COPY . /var/www/html
+RUN rm -f /var/www/html/.env
+
+COPY .env2 /var/www/html/.env
+
 
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
