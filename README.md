@@ -1,4 +1,4 @@
-Vidéo Docker, on se base sur le compose.yml.
+Script Vidéo Docker/explication du projet, on se base sur le compose.yml pour faire les explications étape par étape (pour lancer le projet, cloner le repo puis "docker compose up --build").
 
 Ordre de compose.yml :
 - Build de PHP1 et PHP2
