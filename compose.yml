@@ -4,11 +4,13 @@ services:
       context: .
       dockerfile: docker/php1/dockerfile
     container_name: php1
-    environment:
-      APP_SERVER_NAME: ${APP_SERVER_NAME}
     volumes:
+      - .:/var/www/html
       - vendor_data:/var/www/html/vendor
       - storage_data:/var/www/html/storage
+    depends_on:
+      db:
+        condition: service_healthy
 
   nginx1:
     image: nginx:latest
