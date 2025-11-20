@@ -30,8 +30,8 @@ services:
     container_name: php2
     volumes:
       - .:/var/www/html
-      - /var/www/html/vendor
-      - /var/www/html/storage
+      - vendor_data:/var/www/html/vendor
+      - storage_data:/var/www/html/storage
     depends_on:
       db:
         condition: service_healthy
@@ -70,7 +70,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-prootpassword"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${DB_PASSWORD}"]
       interval: 5s
       timeout: 3s
       retries: 30
